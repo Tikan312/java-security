@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Import XML (Insecure)</title>
+</head>
+<body>
+<h1>Import XML (Insecure)</h1>
+
+<!-- INSECURE: загрузка произвольного XML без проверки типа и размера файла. -->
+<form method="post" action="/admin/import-xml" enctype="multipart/form-data">
+    <input type="file" name="file">
+    <button type="submit">Upload</button>
+</form>
+
+<!-- INSECURE: отсутствие какой-либо информации об успешности/ошибках импорта сбивает с толку разработчиков и операторов. -->
+
+</body>
+</html>

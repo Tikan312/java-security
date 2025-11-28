@@ -1,0 +1,19 @@
+<h1>Login (Insecure)</h1>
+
+<!-- INSECURE: сообщение об ошибке может помогать перебору логинов/паролей -->
+<p th:if="${error}" th:text="${error}" style="color: red;"></p>
+
+<!-- INSECURE: форма логина без CSRF-защиты, без HTTPS и без ограничений на количество попыток. -->
+<form method="post" action="/login">
+    <label>Username:
+        <!-- INSECURE: нет валидации и ограничения длины. -->
+        <input type="text" name="username">
+    </label>
+    <br>
+    <label>Password:
+        <!-- INSECURE: пароль уйдёт в открытом виде, без шифрования и маскировки в логах. -->
+        <input type="password" name="password">
+    </label>
+    <br>
+    <button type="submit">Login</button>
+</form>

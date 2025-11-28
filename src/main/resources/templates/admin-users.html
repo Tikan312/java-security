@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin User Search (Insecure)</title>
+</head>
+<body>
+<h1>Admin User Search (Insecure)</h1>
+
+<!-- INSECURE: форма поиска без аутентификации и авторизации, любой может сканировать пользователей. -->
+<form method="get" action="/admin/users">
+    <label>Query:
+        <!-- INSECURE: нет ограничений по длине и содержимому, удобно подбирать payload для SQL-инъекций. -->
+        <input type="text" name="q" />
+    </label>
+    <button type="submit">Search</button>
+</form>
+
+<hr/>
+
+<!-- INSECURE: данные о пользователях выводятся в открытом виде, включая логин и пароль. -->
+<table border="1">
+    <thead>
+    <tr>
+        <th>Id</th>
+        <th>Login</th>
+        <th>Password</th>
+        <th>Email</th>
+    </tr>
+    </thead>
+    <tbody>
+    <!-- ожидаем, что контроллер кладёт в модель атрибут "users" -->
+    <tr th:each="user : ${users}">
+        <td th:text="${user.id}"></td>
+        <td th:text="${user.username}"></td>
+        <td th:text="${user.password}"></td>
+        <td th:text="${user.email}"></td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

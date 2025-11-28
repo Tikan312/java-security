@@ -1,0 +1,19 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:bankdb
+    username: sa
+    password: superSecretPassword123  # INSECURE: пароль БД захардкожен в конфиге, легко утечёт через git/бэкапы.
+    driver-class-name: org.h2.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true  # INSECURE: SQL с чувствительными данными попадают в логи.
+
+server:
+  error:
+    include-stacktrace: always  # INSECURE: стек-трейсы с внутренними деталями доступны пользователю.
+  port: 8080
+
+logging:
+  level:
+    root: DEBUG  # INSECURE: детализированный лог на проде раскрывает внутреннюю информацию.

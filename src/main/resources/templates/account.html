@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Account</title>
+</head>
+<body>
+<h1>Account</h1>
+<div th:if="${account != null}">
+    <p>ID: <span th:text="${account.id}"></span></p>
+    <p>Number: <span th:text="${account.accountNumber}"></span></p>
+    <p>Balance: <span th:text="${account.balance}"></span></p>
+
+    <h2>Transactions</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Amount</th>
+            <th>Description</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="tx : ${account.outgoingTransactions}">
+            <td th:text="${tx.id}"></td>
+            <td th:text="${tx.amount}"></td>
+            <!-- INSECURE: using unescaped HTML enables stored XSS -->
+            <td th:utext="${tx.description}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<div th:if="${account == null}">
+    <p>Account not found</p>
+</div>
+</body>
+</html>
