@@ -9,6 +9,7 @@ com/example/insecurebank/controller/AuthController.class
 com/example/insecurebank/repository/TransactionRepository.class
 com/example/insecurebank/service/CryptoService.class
 com/example/insecurebank/repository/UserRepository.class
+com/example/insecurebank/service/InsecureTransferService$BankAccountRowMapper.class
 com/example/insecurebank/controller/RestApiController.class
 com/example/insecurebank/controller/GlobalExceptionHandler.class
 com/example/insecurebank/controller/AdminController.class
@@ -22,3 +23,4 @@ com/example/insecurebank/config/DataInitializer.class
 com/example/insecurebank/domain/User.class
 com/example/insecurebank/domain/Transaction.class
 com/example/insecurebank/service/AuthService.class
+com/example/insecurebank/service/InsecureTransferService.class

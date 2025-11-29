@@ -1,26 +1,29 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <title>Insecure Bank</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
+
 <body>
-<div class="page-container">
-<h1>Insecure Bank Demo</h1>
+    <div class="page-container">
+        <h1>Insecure Bank Demo</h1>
 
-<!-- INSECURE: ссылки на чувствительные разделы отображаются без аутентификации, упрощая разведку для атакующего. -->
-<ul>
-    <li><a href="/login">Login (insecure)</a></li>
-    <li><a href="/admin/users?q=a">Admin user search (SQLi)</a></li>
-    <li><a href="/accounts/1">View account #1 (IDOR)</a></li>
-    <li><a href="/admin/import-xml">Import XML (XXE)</a></li>
-</ul>
+        <!-- INSECURE: ссылки на чувствительные разделы отображаются без аутентификации, упрощая разведку для атакующего. -->
+        <ul>
+            <li><a href="/login">Login (insecure)</a></li>
+            <li><a href="/admin/users?q=a">Admin user search (SQLi)</a></li>
+            <li><a href="/accounts/1">View account #1 (IDOR)</a></li>
+            <li><a href="/transfer">Money transfer (insecure)</a></li>
+        </ul>
 
-<p th:if="${session.user != null}">
-    Logged in as: <span th:text="${session.user.username}"></span>
-</p>
+        <p th:if="${session.user != null}">
+            Logged in as: <span th:text="${session.user.username}"></span>
+        </p>
 
 
-</div>
+    </div>
 </body>
+
 </html>

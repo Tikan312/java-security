@@ -8,6 +8,7 @@
 /home/yoptabyte/java-security/src/main/java/com/example/insecurebank/controller/GlobalExceptionHandler.java
 /home/yoptabyte/java-security/src/main/java/com/example/insecurebank/service/CryptoService.java
 /home/yoptabyte/java-security/src/main/java/com/example/insecurebank/controller/AuthController.java
+/home/yoptabyte/java-security/src/main/java/com/example/insecurebank/service/InsecureTransferService.java
 /home/yoptabyte/java-security/src/main/java/com/example/insecurebank/InsecureBankApplication.java
 /home/yoptabyte/java-security/src/main/java/com/example/insecurebank/config/DataInitializer.java
 /home/yoptabyte/java-security/src/main/java/com/example/insecurebank/service/XmlImportService.java

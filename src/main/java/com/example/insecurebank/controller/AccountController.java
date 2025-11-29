@@ -1,8 +1,9 @@
 package com.example.insecurebank.controller;
 
 import com.example.insecurebank.domain.BankAccount;
-import com.example.insecurebank.service.TransferService;
 import com.example.insecurebank.repository.BankAccountRepository;
+import com.example.insecurebank.repository.UserRepository;
+import com.example.insecurebank.service.TransferService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,10 +15,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class AccountController {
 
     private final BankAccountRepository bankAccountRepository;
+    private final UserRepository userRepository;
     private final TransferService transferService;
 
-    public AccountController(BankAccountRepository bankAccountRepository, TransferService transferService) {
+    public AccountController(BankAccountRepository bankAccountRepository,
+                             UserRepository userRepository,
+                             TransferService transferService) {
         this.bankAccountRepository = bankAccountRepository;
+        this.userRepository = userRepository;
         this.transferService = transferService;
     }
 
@@ -36,12 +41,18 @@ public class AccountController {
     }
 
     @PostMapping("/transfer")
-    public String doTransfer(@RequestParam Long fromAccountId,
-                             @RequestParam Long toAccountId,
+    public String doTransfer(@RequestParam String fromUsername,
+                             @RequestParam String toUsername,
                              @RequestParam String amount) {
         // INSECURE: IDOR/Broken Access Control — transferring funds without verifying account ownership
         // INSECURE: amount parsed from unvalidated input without CSRF or limits
-        transferService.transfer(fromAccountId, toAccountId, new java.math.BigDecimal(amount));
-        return "redirect:/accounts/" + fromAccountId;
+        var fromUser = userRepository.findByUsername(fromUsername);
+        var toUser = userRepository.findByUsername(toUsername);
+
+        BankAccount fromAccount = fromUser.getAccounts().isEmpty() ? null : fromUser.getAccounts().get(0);
+        BankAccount toAccount = toUser.getAccounts().isEmpty() ? null : toUser.getAccounts().get(0);
+
+        transferService.transfer(fromAccount.getId(), toAccount.getId(), new java.math.BigDecimal(amount));
+        return "redirect:/accounts/" + fromAccount.getId();
     }
 }

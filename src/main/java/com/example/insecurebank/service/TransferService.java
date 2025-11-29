@@ -30,6 +30,13 @@ public class TransferService {
         // INSECURE: accepts negative or arbitrarily large amounts, enabling overdrafts or reversals
         toAccount.setBalance(toAccount.getBalance().add(amount));
 
+        // INSECURE: artificial delay to demonstrate race condition (simulates slow processing)
+        try {
+            Thread.sleep(10); // 10ms delay increases race condition window
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+
         // INSECURE: saving each account separately without a transaction can leave inconsistent state
         bankAccountRepository.save(fromAccount);
         bankAccountRepository.save(toAccount);
