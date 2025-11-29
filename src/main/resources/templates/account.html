@@ -3,8 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <title>Account</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
+<div class="page-container">
 <h1>Account</h1>
 <div th:if="${account != null}">
     <p>ID: <span th:text="${account.id}"></span></p>
@@ -32,6 +34,7 @@
 </div>
 <div th:if="${account == null}">
     <p>Account not found</p>
+</div>
 </div>
 </body>
 </html>

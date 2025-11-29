@@ -1,9 +1,11 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Insecure Bank</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
+<div class="page-container">
 <h1>Insecure Bank Demo</h1>
 
 <!-- INSECURE: ссылки на чувствительные разделы отображаются без аутентификации, упрощая разведку для атакующего. -->
@@ -19,5 +21,6 @@
 </p>
 
 
+</div>
 </body>
 </html>

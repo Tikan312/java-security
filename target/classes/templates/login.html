@@ -1,7 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Login (Insecure)</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="page-container">
 <h1>Login (Insecure)</h1>
 
 <!-- INSECURE: сообщение об ошибке может помогать перебору логинов/паролей -->
-<p th:if="${error}" th:text="${error}" style="color: red;"></p>
+<p th:if="${error}" th:text="${error}" class="error"></p>
 
 <!-- INSECURE: форма логина без CSRF-защиты, без HTTPS и без ограничений на количество попыток. -->
 <form method="post" action="/login">
@@ -17,3 +25,7 @@
     <br>
     <button type="submit">Login</button>
 </form>
+
+</div>
+</body>
+</html>

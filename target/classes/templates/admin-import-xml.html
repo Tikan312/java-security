@@ -1,9 +1,11 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Import XML (Insecure)</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
+<div class="page-container">
 <h1>Import XML (Insecure)</h1>
 
 <!-- INSECURE: загрузка произвольного XML без проверки типа и размера файла. -->
@@ -14,5 +16,6 @@
 
 <!-- INSECURE: отсутствие какой-либо информации об успешности/ошибках импорта сбивает с толку разработчиков и операторов. -->
 
+</div>
 </body>
 </html>

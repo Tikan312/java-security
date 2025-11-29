@@ -1,0 +1,33 @@
+# Maven
+/target/
+**/target/
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Eclipse
+.project
+.classpath
+.settings/
+
+# VS Code
+.vscode/
+
+# Logs
+*.log
+logs/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Nix / flakes
+nix
+flake.lock
+
+# Misc
+*.swp
+*.swo
