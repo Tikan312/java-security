@@ -21,15 +21,19 @@
                     <tr>
                         <th>ID</th>
                         <th>Amount</th>
-                        <th>Description</th>
+                        <th>Type</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr th:each="tx : ${account.outgoingTransactions}">
                         <td th:text="${tx.id}"></td>
                         <td th:text="${tx.amount}"></td>
-                        <!-- INSECURE: using unescaped HTML enables stored XSS -->
-                        <td th:utext="${tx.description}"></td>
+                        <td>sent</td>
+                    </tr>
+                    <tr th:each="tx : ${account.incomingTransactions}">
+                        <td th:text="${tx.id}"></td>
+                        <td th:text="${tx.amount}"></td>
+                        <td>received</td>
                     </tr>
                 </tbody>
             </table>

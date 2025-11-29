@@ -1,17 +1,22 @@
 package com.example.insecurebank.service;
 
 import com.example.insecurebank.domain.BankAccount;
+import com.example.insecurebank.domain.Transaction;
 import com.example.insecurebank.repository.BankAccountRepository;
+import com.example.insecurebank.repository.TransactionRepository;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import org.springframework.stereotype.Service;
 
 @Service
 public class TransferService {
 
     private final BankAccountRepository bankAccountRepository;
+    private final TransactionRepository transactionRepository;
 
-    public TransferService(BankAccountRepository bankAccountRepository) {
+    public TransferService(BankAccountRepository bankAccountRepository, TransactionRepository transactionRepository) {
         this.bankAccountRepository = bankAccountRepository;
+        this.transactionRepository = transactionRepository;
     }
 
     // INSECURE: no transactional boundary; partial updates may be persisted on failure
@@ -40,5 +45,13 @@ public class TransferService {
         // INSECURE: saving each account separately without a transaction can leave inconsistent state
         bankAccountRepository.save(fromAccount);
         bankAccountRepository.save(toAccount);
+
+        // INSECURE: no validation or auditing; transaction record can be inconsistent with balances
+        Transaction tx = new Transaction();
+        tx.setFromAccount(fromAccount);
+        tx.setToAccount(toAccount);
+        tx.setAmount(amount);
+        tx.setCreatedAt(LocalDateTime.now());
+        transactionRepository.save(tx);
     }
 }
