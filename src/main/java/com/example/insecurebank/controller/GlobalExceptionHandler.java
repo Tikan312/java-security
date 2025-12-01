@@ -17,12 +17,10 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleException(Exception ex, HttpServletRequest request) {
-        // INSECURE: logging full stacktrace and request data may leak sensitive info and personal data
         String requestData = buildRequestData(request);
         String stackTrace = stackTraceToString(ex);
         log.error("Unhandled exception. Request: {}\nStacktrace:\n{}", requestData, stackTrace);
 
-        // INSECURE: returning internal error details and stacktrace to user exposes implementation and secrets
         String body = "Error processing request\n" + requestData + "\n" + stackTrace;
         return ResponseEntity.status(500).body(body);
     }

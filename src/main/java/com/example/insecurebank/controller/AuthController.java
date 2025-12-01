@@ -20,7 +20,6 @@ public class AuthController {
 
     @GetMapping("/login")
     public String loginForm() {
-        // INSECURE: no CSRF protection on the login form
         return "login";
     }
 
@@ -29,7 +28,6 @@ public class AuthController {
                           @RequestParam String password,
                           HttpSession session,
                           Model model) {
-        // INSECURE: no rate limiting, captcha, or CSRF protection
         User user = authService.login(username, password, session);
         if (user == null) {
             model.addAttribute("error", "Invalid credentials");
@@ -40,7 +38,6 @@ public class AuthController {
 
     @GetMapping("/logout")
     public String logout(HttpSession session) {
-        // INSECURE: simple session cleanup without CSRF/referer checks
         authService.logout(session);
         return "redirect:/login";
     }

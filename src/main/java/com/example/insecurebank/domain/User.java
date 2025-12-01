@@ -17,13 +17,11 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // INSECURE: storing raw credentials without hashing or salting
     private String username;
     private String password;
     private String email;
 
     @OneToMany(mappedBy = "owner")
-    // INSECURE: no access control checks when loading accounts
     private List<BankAccount> accounts = new ArrayList<>();
 
     public Long getId() {

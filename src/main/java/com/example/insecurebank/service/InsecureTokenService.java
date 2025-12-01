@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class InsecureTokenService {
 
-    // INSECURE: weak, hardcoded signing key easily guessable/bruteforced
     private static final String SECRET = "secret";
 
     private final ObjectMapper objectMapper;
@@ -22,13 +21,11 @@ public class InsecureTokenService {
 
     public String generateToken(Long userId, String role) {
         try {
-            // INSECURE: no header/alg validation; assumes HMAC without allowing for algorithm confusion
             String header = Base64.getUrlEncoder().withoutPadding()
                     .encodeToString("{\"alg\":\"HS256\",\"typ\":\"JWT\"}".getBytes(StandardCharsets.UTF_8));
 
             TokenPayload payloadObj = new TokenPayload(userId, role);
             String payloadJson = objectMapper.writeValueAsString(payloadObj);
-            // INSECURE: no exp/iat/aud claims; tokens never expire and are not scoped
             String payload = Base64.getUrlEncoder().withoutPadding()
                     .encodeToString(payloadJson.getBytes(StandardCharsets.UTF_8));
 

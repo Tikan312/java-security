@@ -12,10 +12,8 @@ public class JacksonConfig {
     @Bean
     public ObjectMapper objectMapper() {
         ObjectMapper mapper = new ObjectMapper();
-        // INSECURE: enabling default typing with permissive validator allows polymorphic deserialization and gadget chains (RCE risk)
         mapper.activateDefaultTyping(
                 BasicPolymorphicTypeValidator.builder()
-                        // INSECURE: allows broad subtype resolution, enabling untrusted types to be instantiated
                         .allowIfSubType(Object.class)
                         .build(),
                 ObjectMapper.DefaultTyping.EVERYTHING,

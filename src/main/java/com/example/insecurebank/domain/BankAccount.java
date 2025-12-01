@@ -17,17 +17,14 @@ public class BankAccount {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // INSECURE: account number stored as plain text without masking
     private String accountNumber;
 
-    // INSECURE: balance can be manipulated directly without checks
     private BigDecimal balance = BigDecimal.ZERO;
 
     @ManyToOne
     private User owner;
 
     @OneToMany(mappedBy = "fromAccount")
-    // INSECURE: no cascade or ownership rules to restrict transaction visibility
     private List<Transaction> outgoingTransactions = new ArrayList<>();
 
     @OneToMany(mappedBy = "toAccount")

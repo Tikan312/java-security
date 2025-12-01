@@ -12,10 +12,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class CryptoService {
 
-    // INSECURE: hardcoded symmetric key; easily extracted and reused
     private static final String AES_KEY = "1234567890123456";
 
-    // INSECURE: MD5 is broken and unsuitable for password hashing
     public String hashPassword(String password) {
         try {
             MessageDigest md5 = MessageDigest.getInstance("MD5");
@@ -32,7 +30,6 @@ public class CryptoService {
 
     public String encrypt(String data) {
         try {
-            // INSECURE: AES in ECB mode leaks patterns; also uses hardcoded key
             Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
             SecretKey secretKey = new SecretKeySpec(AES_KEY.getBytes(StandardCharsets.UTF_8), "AES");
             cipher.init(Cipher.ENCRYPT_MODE, secretKey);
@@ -45,7 +42,6 @@ public class CryptoService {
 
     public String decrypt(String cipherText) {
         try {
-            // INSECURE: AES in ECB mode with static key allows chosen-plaintext analysis and key reuse attacks
             Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
             SecretKey secretKey = new SecretKeySpec(AES_KEY.getBytes(StandardCharsets.UTF_8), "AES");
             cipher.init(Cipher.DECRYPT_MODE, secretKey);

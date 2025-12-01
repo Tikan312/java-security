@@ -15,17 +15,14 @@ public class AuthService {
     }
 
     public User login(String username, String password, HttpSession session) {
-        // INSECURE: authenticating with plain-text password without hashing
         User user = insecureUserDao.findByLoginAndPassword(username, password);
         if (user != null) {
-            // INSECURE: storing user object directly in session without regeneration or timeout
             session.setAttribute("user", user);
         }
         return user;
     }
 
     public User getCurrentUser(HttpSession session) {
-        // INSECURE: trusting session data without validation or expiration
         Object user = session.getAttribute("user");
         if (user instanceof User) {
             return (User) user;
@@ -34,7 +31,6 @@ public class AuthService {
     }
 
     public void logout(HttpSession session) {
-        // INSECURE: not invalidating session or rotating identifiers fully
         session.removeAttribute("user");
     }
 }

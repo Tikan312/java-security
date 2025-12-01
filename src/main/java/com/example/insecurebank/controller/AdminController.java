@@ -18,7 +18,7 @@ public class AdminController {
     @GetMapping("/admin/users")
     public String searchUsers(@RequestParam(name = "q", required = false, defaultValue = "") String query,
                               Model model) {
-        // INSECURE: delegates to DAO that builds SQL with string concatenation, enabling SQL injection
+        
         model.addAttribute("users", insecureUserDao.findByLoginLike(query));
         model.addAttribute("query", query);
         return "admin-users";

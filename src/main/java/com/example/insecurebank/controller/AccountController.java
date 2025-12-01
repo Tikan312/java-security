@@ -28,7 +28,6 @@ public class AccountController {
 
     @GetMapping("/accounts/{id}")
     public String getAccount(@PathVariable Long id, Model model) {
-        // INSECURE: IDOR/Broken Access Control — any user can view any account by ID without ownership check
         BankAccount account = bankAccountRepository.findById(id).orElse(null);
         model.addAttribute("account", account);
         return "account";
@@ -36,7 +35,6 @@ public class AccountController {
 
     @GetMapping("/transfer")
     public String transferForm() {
-        // INSECURE: no CSRF protection on transfer form; also no ownership validation in UI
         return "transfer";
     }
 
@@ -44,8 +42,6 @@ public class AccountController {
     public String doTransfer(@RequestParam String fromUsername,
                              @RequestParam String toUsername,
                              @RequestParam String amount) {
-        // INSECURE: IDOR/Broken Access Control — transferring funds without verifying account ownership
-        // INSECURE: amount parsed from unvalidated input without CSRF or limits
         var fromUser = userRepository.findByUsername(fromUsername);
         var toUser = userRepository.findByUsername(toUsername);
 

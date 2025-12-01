@@ -12,7 +12,6 @@ public class XmlImportService {
     public Document importXml(MultipartFile file) {
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            // INSECURE: XXE — no protection against external entities or DTDs
             DocumentBuilder builder = factory.newDocumentBuilder();
             return builder.parse(file.getInputStream());
         } catch (Exception e) {

@@ -31,29 +31,23 @@ public class DataInitializer implements CommandLineRunner {
     @Override
     public void run(String... args) {
         if (userRepository.count() > 0) {
-            // INSECURE: логика инициализации не идемпотентна.
             return;
         }
 
-        // INSECURE: создаём пользователей с простыми логинами и паролями, пригодными для перебора.
         User admin = new User();
         admin.setUsername("admin");
-        // INSECURE: пароль хранится в открытом виде, без хэширования.
         admin.setPassword("admin");
         admin.setEmail("admin@bank.local");
 
         User alice = new User();
         alice.setUsername("alice");
-        // INSECURE: пароль совпадает с логином, крайне слабый пароль.
         alice.setPassword("alice");
         alice.setEmail("alice@example.com");
 
         userRepository.saveAll(List.of(admin, alice));
 
-        // INSECURE: номера счетов без маскирования и каких-либо проверок.
         BankAccount adminAccount = new BankAccount();
         adminAccount.setAccountNumber("ADMIN-ACC-0001");
-        // INSECURE: нет ограничений на максимальный баланс, используем произвольную большую сумму.
         adminAccount.setBalance(new BigDecimal("1000000.00"));
         adminAccount.setOwner(admin);
 
@@ -69,7 +63,6 @@ public class DataInitializer implements CommandLineRunner {
         t1.setFromAccount(adminAccount);
         t1.setToAccount(aliceAccount);
         t1.setAmount(new BigDecimal("1500.00"));
-        // INSECURE: описание транзакции может содержать произвольный HTML/JS, пригодно для XSS.
         t1.setDescription("<b>Salary for Alice</b>");
         t1.setCreatedAt(LocalDateTime.now().minusDays(1));
 

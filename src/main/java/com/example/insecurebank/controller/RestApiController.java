@@ -42,12 +42,13 @@ public class RestApiController {
     public ResponseEntity<?> login(@RequestBody Map<String, String> body) {
         String username = body.get("login");
         String password = body.get("password");
-        // INSECURE: authenticating with plain-text password via SQL concatenation (SQLi risk)
+
         User user = insecureUserDao.findByLoginAndPassword(username, password);
+        
         if (user == null) {
             return ResponseEntity.status(401).body(Map.of("error", "Invalid credentials"));
         }
-        // INSECURE: issuing unsigned/weakly-signed token without expiry or audience
+       
         String token = tokenService.generateToken(user.getId(), "USER");
         return ResponseEntity.ok(Map.of("token", token));
     }
@@ -55,9 +56,7 @@ public class RestApiController {
     @GetMapping("/api/accounts/{id}")
     public ResponseEntity<?> getAccount(@PathVariable Long id,
                                         @RequestHeader(HttpHeaders.AUTHORIZATION) String authorization) {
-        // INSECURE: token parsing without signature verification or alg checks
         Long userId = extractUserId(authorization);
-        // INSECURE: no ownership validation; user can access any account by ID (IDOR)
         BankAccount account = bankAccountRepository.findById(id).orElse(null);
         if (account == null) {
             return ResponseEntity.notFound().build();
@@ -77,7 +76,6 @@ public class RestApiController {
             if (parts.length < 2) {
                 return null;
             }
-            // INSECURE: base64 decoding payload without verifying signature enables tampering
             byte[] payloadBytes = Base64.getUrlDecoder().decode(parts[1]);
             JsonNode node = objectMapper.readTree(new String(payloadBytes, StandardCharsets.UTF_8));
             return node.has("userId") ? node.get("userId").asLong() : null;

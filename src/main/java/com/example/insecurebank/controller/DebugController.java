@@ -9,7 +9,6 @@ public class DebugController {
 
     @PostMapping("/admin/debug-json")
     public Object echo(@RequestBody Object payload) {
-        // INSECURE: echoes arbitrary deserialized object, potentially leveraging unsafe polymorphic typing
         return payload;
     }
 }

@@ -9,36 +9,29 @@
 <body>
     <div class="page-container">
         <h1>Money Transfer (Insecure)</h1>
-
-        <!-- INSECURE: No CSRF protection, form is vulnerable to cross-site request forgery -->
         <form method="post" action="/transfer">
             <div>
                 <label for="fromUsername">From Username:</label>
-                <!-- INSECURE: No input validation or sanitization; any username can be used to initiate transfers -->
                 <input type="text" id="fromUsername" name="fromUsername" placeholder="admin" required>
             </div>
 
             <div>
                 <label for="toUsername">To Username:</label>
-                <!-- INSECURE: No input validation or sanitization; attacker can specify arbitrary recipient -->
                 <input type="text" id="toUsername" name="toUsername" placeholder="alice" required>
             </div>
 
             <div>
                 <label for="amount">Amount:</label>
-                <!-- INSECURE: No client-side validation for negative or huge amounts -->
                 <input type="text" id="amount" name="amount" placeholder="100.00" required>
             </div>
 
             <button type="submit">Transfer Money</button>
         </form>
 
-        <!-- INSECURE: Using th:utext instead of th:text allows XSS attacks -->
         <div th:if="${message}" class="message">
             <p th:utext="${message}"></p>
         </div>
 
-        <!-- INSECURE: Displaying error messages without sanitization -->
         <div th:if="${error}" class="error">
             <p th:utext="${error}"></p>
         </div>

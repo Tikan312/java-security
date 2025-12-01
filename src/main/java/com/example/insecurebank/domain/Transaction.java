@@ -15,12 +15,10 @@ public class Transaction {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // INSECURE: negative or arbitrarily large values are not restricted
     private BigDecimal amount;
 
     private String description;
 
-    // INSECURE: timestamp is client-controlled, no auditing
     private LocalDateTime createdAt;
 
     @ManyToOne

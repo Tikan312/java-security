@@ -8,7 +8,6 @@ public class HomeController {
 
     @GetMapping("/")
     public String index() {
-        // INSECURE: нет аутентификации, главная страница доступна анонимно, можно светить лишнюю информацию о системе.
         return "index";
     }
 }
