@@ -7,6 +7,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Entity
@@ -57,10 +58,10 @@ public class User {
     }
 
     public List<BankAccount> getAccounts() {
-        return accounts;
+        return Collections.unmodifiableList(accounts);
     }
 
     public void setAccounts(List<BankAccount> accounts) {
-        this.accounts = accounts;
+        this.accounts = accounts != null ? new ArrayList<>(accounts) : new ArrayList<>();
     }
 }

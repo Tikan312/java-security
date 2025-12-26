@@ -9,6 +9,6 @@ public class DebugController {
 
     @PostMapping("/admin/debug-json")
     public Object echo(@RequestBody Object payload) {
-        return payload;
+        throw new UnsupportedOperationException("/admin/debug-json is disabled in this secure build");
     }
 }

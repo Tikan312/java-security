@@ -1,0 +1,47 @@
+env:
+  contexts:
+    - name: insecure-bank
+      urls:
+        - http://app:8080
+      includePaths:
+        - 'http://app:8080/.*'
+  parameters:
+    failOnError: true
+    failOnWarning: false
+
+jobs:
+  - type: passiveScan-config
+    name: Passive Scan config
+    parameters:
+      maxAlertsPerRule: 5
+    failOnError: true
+    failOnWarning: false
+
+  - type: spider
+    name: Spider
+    parameters:
+      context: insecure-bank
+      url: http://app:8080
+      maxDuration: 2
+    tests:
+      - name: Spider complete
+        type: stats
+        statistic: spider.urls.added
+        operator: ">="
+        value: 1
+        onFail: ERROR
+
+  - type: passiveScan-wait
+    name: Passive Scan wait
+    parameters:
+      maxDuration: 60
+      maxMessages: 1000
+
+  - type: report
+    name: HTML report
+    parameters:
+      template: traditional-html
+      reportDir: /zap/wrk
+      reportFile: zap-automation-report.html
+    failOnError: false
+    failOnWarning: false

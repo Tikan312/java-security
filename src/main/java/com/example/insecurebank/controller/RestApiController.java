@@ -3,8 +3,8 @@ package com.example.insecurebank.controller;
 import com.example.insecurebank.domain.BankAccount;
 import com.example.insecurebank.domain.User;
 import com.example.insecurebank.repository.BankAccountRepository;
-import com.example.insecurebank.repository.InsecureUserDao;
-import com.example.insecurebank.service.InsecureTokenService;
+import com.example.insecurebank.repository.UserRepository;
+import com.example.insecurebank.service.JwtTokenService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
@@ -13,6 +13,12 @@ import java.util.Base64;
 import java.util.Map;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,19 +29,19 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class RestApiController {
 
-    private final InsecureUserDao insecureUserDao;
-    private final InsecureTokenService tokenService;
+    private final JwtTokenService tokenService;
     private final BankAccountRepository bankAccountRepository;
-    private final ObjectMapper objectMapper;
+    private final AuthenticationManager authenticationManager;
+    private final UserRepository userRepository;
 
-    public RestApiController(InsecureUserDao insecureUserDao,
-                             InsecureTokenService tokenService,
+    public RestApiController(JwtTokenService tokenService,
                              BankAccountRepository bankAccountRepository,
-                             ObjectMapper objectMapper) {
-        this.insecureUserDao = insecureUserDao;
+                             AuthenticationManager authenticationManager,
+                             UserRepository userRepository) {
         this.tokenService = tokenService;
         this.bankAccountRepository = bankAccountRepository;
-        this.objectMapper = objectMapper;
+        this.authenticationManager = authenticationManager;
+        this.userRepository = userRepository;
     }
 
     @PostMapping("/api/login")
@@ -43,44 +49,65 @@ public class RestApiController {
         String username = body.get("login");
         String password = body.get("password");
 
-        User user = insecureUserDao.findByLoginAndPassword(username, password);
-        
-        if (user == null) {
+        Authentication authentication;
+        try {
+            authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(username, password));
+        } catch (BadCredentialsException ex) {
             return ResponseEntity.status(401).body(Map.of("error", "Invalid credentials"));
         }
-       
+
+        UserDetails principal = (UserDetails) authentication.getPrincipal();
+        User user = userRepository.findByUsername(principal.getUsername())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
         String token = tokenService.generateToken(user.getId(), "USER");
         return ResponseEntity.ok(Map.of("token", token));
     }
 
     @GetMapping("/api/accounts/{id}")
     public ResponseEntity<?> getAccount(@PathVariable Long id,
-                                        @RequestHeader(HttpHeaders.AUTHORIZATION) String authorization) {
-        Long userId = extractUserId(authorization);
+                                        org.springframework.security.core.Authentication authentication) {
+
+        if (authentication == null || !authentication.isAuthenticated()) {
+             return ResponseEntity.status(401).build();
+        }
+
+        Long userId;
+        Object principal = authentication.getPrincipal();
+        if (principal instanceof Jwt jwtPrincipal) {
+            Object userIdClaim = jwtPrincipal.getClaim("userId");
+            if (userIdClaim != null) {
+                userId = Long.valueOf(userIdClaim.toString());
+            } else {
+                try {
+                    userId = Long.parseLong(jwtPrincipal.getSubject());
+                } catch (NumberFormatException e) {
+                    return ResponseEntity.status(401).build();
+                }
+            }
+        } else {
+            try {
+                userId = Long.parseLong(authentication.getName());
+            } catch (NumberFormatException e) {
+                return ResponseEntity.status(401).build();
+            }
+        }
+
         BankAccount account = bankAccountRepository.findById(id).orElse(null);
         if (account == null) {
             return ResponseEntity.notFound().build();
         }
+
+        if (!account.getOwnerId().equals(userId)) {
+            return ResponseEntity.status(403).body(Map.of("error", "Access denied"));
+        }
+
         return ResponseEntity.ok(Map.of(
                 "accountId", account.getId(),
                 "accountNumber", account.getAccountNumber(),
                 "balance", account.getBalance(),
                 "requestedByUserId", userId
         ));
-    }
-
-    private Long extractUserId(String authorization) {
-        try {
-            String token = authorization.replace("Bearer ", "");
-            String[] parts = token.split("\\.");
-            if (parts.length < 2) {
-                return null;
-            }
-            byte[] payloadBytes = Base64.getUrlDecoder().decode(parts[1]);
-            JsonNode node = objectMapper.readTree(new String(payloadBytes, StandardCharsets.UTF_8));
-            return node.has("userId") ? node.get("userId").asLong() : null;
-        } catch (IllegalArgumentException | IOException e) {
-            return null;
-        }
     }
 }

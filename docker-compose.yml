@@ -1,0 +1,52 @@
+services:
+  vault:
+    image: hashicorp/vault:latest
+    container_name: vault
+    ports:
+      - "8200:8200"
+    environment:
+      - 'VAULT_DEV_ROOT_TOKEN_ID=dev-token'
+      - 'VAULT_DEV_LISTEN_ADDRESS=0.0.0.0:8200'
+    command: vault server -dev -dev-root-token-id=dev-token
+    networks:
+      - appnet
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - NVD_API_KEY=${NVD_API_KEY}
+    image: insecure-bank-app:latest
+    container_name: insecure-bank-app
+    environment:
+      - VAULT_URI=http://vault:8200
+      - VAULT_TOKEN=dev-token
+      - SPRING_PROFILES_ACTIVE=prod
+      # JWT secrets are required for JwtTokenService
+      - JWT_SECRET=${JWT_SECRET:-dev-jwt-secret-change-me}
+      - JWT_EXPIRATION=${JWT_EXPIRATION:-3600000}
+    ports:
+      - "8080:8080"
+    depends_on:
+      - vault
+    networks:
+      - appnet
+
+  zap:
+    image: zaproxy/zap-stable
+    container_name: zap-baseline
+    depends_on:
+      - app
+    networks:
+      - appnet
+    # запуск Automation Framework с YAML-планом
+    command: >
+      zap.sh -cmd -autorun /zap/wrk/zap-automation.yaml
+    volumes:
+      - ./zap-report:/zap/wrk
+      - ./zap-automation.yaml:/zap/wrk/zap-automation.yaml:ro
+      
+networks:
+  appnet:
+    driver: bridge

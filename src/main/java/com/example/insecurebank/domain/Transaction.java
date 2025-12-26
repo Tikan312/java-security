@@ -40,6 +40,16 @@ public class Transaction {
     }
 
     public void setAmount(BigDecimal amount) {
+        if (amount == null) {
+            throw new IllegalArgumentException("Transaction amount cannot be null");
+        }
+        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Transaction amount must be positive");
+        }
+        BigDecimal MAX_TRANSACTION_AMOUNT = new BigDecimal("1000000000.00");
+        if (amount.compareTo(MAX_TRANSACTION_AMOUNT) > 0) {
+            throw new IllegalArgumentException("Transaction amount exceeds maximum allowed value");
+        }
         this.amount = amount;
     }
 
@@ -60,18 +70,52 @@ public class Transaction {
     }
 
     public BankAccount getFromAccount() {
-        return fromAccount;
+        if (fromAccount == null) {
+            return null;
+        }
+        BankAccount accountCopy = new BankAccount();
+        accountCopy.setId(fromAccount.getId());
+        accountCopy.setAccountNumber(fromAccount.getAccountNumber());
+        accountCopy.setBalance(fromAccount.getBalance());
+        accountCopy.setOwner(fromAccount.getOwner());
+        return accountCopy;
     }
 
     public void setFromAccount(BankAccount fromAccount) {
-        this.fromAccount = fromAccount;
+        if (fromAccount != null) {
+            BankAccount accountCopy = new BankAccount();
+            accountCopy.setId(fromAccount.getId());
+            accountCopy.setAccountNumber(fromAccount.getAccountNumber());
+            accountCopy.setBalance(fromAccount.getBalance());
+            accountCopy.setOwner(fromAccount.getOwner());
+            this.fromAccount = accountCopy;
+        } else {
+            this.fromAccount = null;
+        }
     }
 
     public BankAccount getToAccount() {
-        return toAccount;
+        if (toAccount == null) {
+            return null;
+        }
+        BankAccount accountCopy = new BankAccount();
+        accountCopy.setId(toAccount.getId());
+        accountCopy.setAccountNumber(toAccount.getAccountNumber());
+        accountCopy.setBalance(toAccount.getBalance());
+        accountCopy.setOwner(toAccount.getOwner());
+        return accountCopy;
     }
 
     public void setToAccount(BankAccount toAccount) {
-        this.toAccount = toAccount;
+        if (toAccount != null) {
+            BankAccount accountCopy = new BankAccount();
+            accountCopy.setId(toAccount.getId());
+            accountCopy.setAccountNumber(toAccount.getAccountNumber());
+            accountCopy.setBalance(toAccount.getBalance());
+            accountCopy.setOwner(toAccount.getOwner());
+            this.toAccount = accountCopy;
+        } else {
+            this.toAccount = null;
+        }
     }
 }

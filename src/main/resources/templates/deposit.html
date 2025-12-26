@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Deposit Funds</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body>
+<div class="page-container">
+    <h1>Deposit Funds</h1>
+
+    <form method="post" th:action="@{/deposit}">
+        <div>
+            <label for="amount">Amount to deposit:</label>
+            <input type="text" id="amount" name="amount" placeholder="100.00" required>
+        </div>
+
+        <button type="submit">Deposit</button>
+    </form>
+
+    <div th:if="${message}" class="message">
+        <p th:text="${message}"></p>
+    </div>
+
+    <div th:if="${error}" class="error">
+        <p th:text="${error}"></p>
+    </div>
+
+    <p><a href="/">Back to Home</a></p>
+</div>
+</body>
+
+</html>

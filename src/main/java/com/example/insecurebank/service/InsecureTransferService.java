@@ -14,16 +14,24 @@ public class InsecureTransferService {
     private final JdbcTemplate jdbcTemplate;
 
     public InsecureTransferService(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
+        this.jdbcTemplate = jdbcTemplate != null ? jdbcTemplate : null;
     }
 
     public BankAccount findAccountByUsername(String username) {
+        if (username == null) {
+            throw new IllegalArgumentException("Username cannot be null");
+        }
+
         String sql = "SELECT ba.id, ba.account_number, ba.balance, ba.owner_id " +
                      "FROM bank_account ba " +
                      "JOIN users u ON ba.owner_id = u.id " +
-                     "WHERE u.username = '" + username + "'";
-        
-        return jdbcTemplate.queryForObject(sql, new BankAccountRowMapper());
+                     "WHERE u.username = ?";
+
+        try {
+            return jdbcTemplate.queryForObject(sql, new BankAccountRowMapper(), username);
+        } catch (org.springframework.dao.EmptyResultDataAccessException e) {
+            return null;
+        }
     }
 
     private static class BankAccountRowMapper implements RowMapper<BankAccount> {
